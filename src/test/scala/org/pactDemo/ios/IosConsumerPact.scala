@@ -15,8 +15,6 @@ class IosConsumerPact extends FunSpec with Matchers {
   describe("Connecting to the Provider service") {
 
     it("should be able to fetch results") {
-
-
       forgePact
         .between("Ios")
         .and("Provider")
