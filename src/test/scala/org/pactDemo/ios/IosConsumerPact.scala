@@ -1,5 +1,6 @@
 package org.pactDemo.ios
 
+import com.twitter.finagle.Http
 import com.twitter.util.{Await, Future}
 import org.pactDemo.utilities.FinatraClient
 import org.scalatest.{FunSpec, Matchers}
@@ -35,8 +36,9 @@ class IosConsumerPact extends FunSpec with Matchers {
         )
         .runConsumerTest {
           mockConfig =>
-            val client = new AuthenticationClient(mockConfig)
-            val request = AuthenticationRequest("1","7899-valid-for-id-1-token")
+            val rawHttpClient = Http.newService(mockConfig.host + ":" + mockConfig.port)
+            val client = new AuthenticationClient(rawHttpClient)
+            val request = AuthenticationRequest("1", "7899-valid-for-id-1-token")
             client(request).await shouldBe AuthenticationValid
         }
     }
@@ -56,12 +58,10 @@ class IosConsumerPact extends FunSpec with Matchers {
       )
       .runConsumerTest {
         mockConfig =>
-          val client = new AuthenticationClient(mockConfig)
-          // request => Future[Response]
+          val rawHttpClient = Http.newService(mockConfig.host + ":" + mockConfig.port)
+          val client = new AuthenticationClient(rawHttpClient)
           val request = AuthenticationRequest("1", "123-invalid-for-id-1-token")
           client(request).await shouldBe AuthenticationInvalid
       }
   }
-}
-
 }
